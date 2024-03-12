@@ -18,8 +18,24 @@ class NoteModelManager {
 }
 
 extension NoteModelManager {
+
     func getDataFromCoreData() -> [NoteModel]? {
-        return nil
+        let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+        let fetchRequest: NSFetchRequest<Notes> = Notes.fetchRequest()
+        
+        do {
+            let result = try context.fetch(fetchRequest)
+            modelArray = []
+            for i in result {
+                guard let title = i.title else { return nil}
+                let note = NoteModel(id: i.id, title: title, text: i.text)
+                modelArray?.append(note)
+            }
+            return modelArray
+        } catch {
+            //TODO: Error alert
+            return nil
+        }
     }
     
     func setNewDataToCoreData(data: NoteModel) {
