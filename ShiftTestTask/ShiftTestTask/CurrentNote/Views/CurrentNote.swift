@@ -10,9 +10,11 @@ import UIKit
 class CurrentNote: UIViewController {
 
     var presenter : CurrentNotePresenterProtocol!
+    var indexPath : IndexPath!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
     }
 }
 extension CurrentNote: CurrentNoteProtocol {

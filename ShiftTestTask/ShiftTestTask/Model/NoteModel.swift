@@ -8,6 +8,8 @@
 import Foundation
 
 struct NoteModel {
-    var data : Data
+    var id: UUID?
+    var title: String
+    var text: String?
 }
 

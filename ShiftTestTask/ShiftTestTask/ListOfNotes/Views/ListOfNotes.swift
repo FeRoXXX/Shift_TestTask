@@ -11,7 +11,7 @@ class ListOfNotes: UIViewController {
     @IBOutlet weak var tableOfNotes: UITableView!
     
     var goToAddNote: (() -> Void)?
-    var goToNote: (() -> Void)?
+    var goToNote: ((_: IndexPath) -> Void)?
     
     var presenter : ListOfNotesPresenterProtocol!
     var cellItem : [NoteModel]?
@@ -20,6 +20,7 @@ class ListOfNotes: UIViewController {
         super.viewDidLoad()
         setupNavigationBar()
         setupTableView()
+        presenter.loadView(controller: self, view: self)
     }
 
 }
@@ -46,7 +47,7 @@ extension ListOfNotes : UITableViewDelegate, UITableViewDataSource, ListOfNotesP
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         guard let cellItem = cellItem,
-              !cellItem.isEmpty else { return 0}
+              !cellItem.isEmpty else { return 0 }
         return cellItem.count
     }
     
@@ -61,7 +62,12 @@ extension ListOfNotes : UITableViewDelegate, UITableViewDataSource, ListOfNotesP
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        self.goToNote?()
+        self.goToNote?(indexPath)
+    }
+    
+    func updateTableData(data: [NoteModel]?) {
+        self.cellItem = data
+        tableOfNotes.reloadData()
     }
     
 }

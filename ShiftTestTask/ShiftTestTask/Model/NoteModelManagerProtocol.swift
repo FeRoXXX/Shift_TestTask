@@ -8,6 +8,10 @@
 import Foundation
 
 protocol NoteModelManagerProtocol {
-    func getData() -> Data?
-    func setData(data: Data)
+    func getData() -> [NoteModel]?
+    func setData(data: NoteModel)
+    func getDataFromCoreData() -> [NoteModel]?
+    func setNewDataToCoreData(data: NoteModel)
+    func correctDataInCoreData(data: NoteModel)
+    func deleteDataFromCoreData(id: UUID)
 }

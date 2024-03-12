@@ -21,27 +21,26 @@ final class ListOfNotesPresenter {
 
 private extension ListOfNotesPresenter {
     
-    private func onClickedCell() {
-        guard let view = view else { return }
-        
-    }
-    
     private func onClickedAddNote() {
         self.router.toAddNote()
     }
     
-    private func onClickedCurrentCell() {
-        self.router.toCurrentCell()
+    private func onClickedCurrentCell(_ indexPath: IndexPath) {
+        self.router.toCurrentCell(indexPath)
     }
     
     private func setHandlers() {
-        self.view?.goToNote = { [weak self] in
-            self?.onClickedCurrentCell()
+        self.view?.goToNote = { [weak self] indexPath in
+            self?.onClickedCurrentCell(indexPath)
         }
         
         self.view?.goToAddNote = { [weak self] in
             self?.onClickedAddNote()
         }
+    }
+    
+    private func updateTable() {
+        view?.updateTableData(data: model.getDataFromCoreData())
     }
 }
 extension ListOfNotesPresenter: ListOfNotesPresenterProtocol {
@@ -50,5 +49,6 @@ extension ListOfNotesPresenter: ListOfNotesPresenterProtocol {
         self.view = view
         
         self.setHandlers()
+        updateTable()
     }
 }
