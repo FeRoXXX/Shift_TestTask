@@ -38,14 +38,16 @@ extension NoteModelManager {
         }
     }
     
-    func setNewDataToCoreData(data: NoteModel) {
+    func setNewDataToCoreData(title: String, text: String?) {
+        guard title != "" else { return }
         let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
-        let newData = Notes()
+        let newData = Notes(context: context)
         newData.id = UUID()
-        newData.title = data.title
-        if let text = data.text {
+        newData.title = title
+        if let text = text {
             newData.text = text
         }
+        
         do {
             try context.save()
         } catch {

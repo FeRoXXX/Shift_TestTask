@@ -51,4 +51,9 @@ extension ListOfNotesPresenter: ListOfNotesPresenterProtocol {
         self.setHandlers()
         updateTable()
     }
+    
+    func viewOpen() {
+        updateTable()
+    }
+    
 }

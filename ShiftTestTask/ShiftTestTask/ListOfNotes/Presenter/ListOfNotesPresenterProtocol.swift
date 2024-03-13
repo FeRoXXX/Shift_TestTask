@@ -9,4 +9,5 @@ import Foundation
 
 protocol ListOfNotesPresenterProtocol {
     func loadView(controller: ListOfNotes, view: ListOfNotesProtocol)
+    func viewOpen()
 }

@@ -15,6 +15,7 @@ class ListOfNotes: UIViewController {
     
     var presenter : ListOfNotesPresenterProtocol!
     var cellItem : [NoteModel]?
+    var firstOpen : Bool = true
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -23,6 +24,13 @@ class ListOfNotes: UIViewController {
         presenter.loadView(controller: self, view: self)
     }
 
+    override func viewDidAppear(_ animated: Bool) {
+        if !firstOpen {
+            presenter.viewOpen()
+        }
+        firstOpen = false
+    }
+    
 }
 private extension ListOfNotes {
     private func setupNavigationBar() {
@@ -56,7 +64,12 @@ extension ListOfNotes : UITableViewDelegate, UITableViewDataSource, ListOfNotesP
               !cellItem.isEmpty else { return UITableViewCell() }
         let cell = UITableViewCell()
         var cellStyle = cell.defaultContentConfiguration()
-        cellStyle.text = "123"
+        cellStyle.text = cellItem[indexPath.row].title
+        if let text = cellItem[indexPath.row].text {
+            cellStyle.secondaryText = text
+        } else {
+            cellStyle.secondaryText = "Нет дополнительного текста"
+        }
         cell.contentConfiguration = cellStyle
         return cell
     }

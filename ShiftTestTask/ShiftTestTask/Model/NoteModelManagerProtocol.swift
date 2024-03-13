@@ -11,7 +11,7 @@ protocol NoteModelManagerProtocol {
     func getData() -> [NoteModel]?
     func setData(data: NoteModel)
     func getDataFromCoreData() -> [NoteModel]?
-    func setNewDataToCoreData(data: NoteModel)
+    func setNewDataToCoreData(title: String, text: String?)
     func correctDataInCoreData(data: NoteModel)
     func deleteDataFromCoreData(id: UUID)
 }
