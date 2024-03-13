@@ -31,31 +31,4 @@ extension AddNewNotePresenter: AddNewNotePresenterProtocol {
         model.setNewDataToCoreData(title: title, text: text)
     }
     
-    func findStrings(in textView: UITextView) -> (title: String?, text: String?) {
-        guard let textView = textView.text else {
-            return (nil, nil)
-        }
-        
-        let lines = textView.components(separatedBy: CharacterSet.newlines)
-        var title: String?
-        var text: String?
-        
-        for (index, line) in lines.enumerated() {
-            let trimmedLine = line.trimmingCharacters(in: .whitespacesAndNewlines)
-            if !trimmedLine.isEmpty {
-                if title == nil {
-                    title = trimmedLine
-                } else {
-                    if text == nil {
-                        text = trimmedLine
-                    } else {
-                        text! += "\n" + trimmedLine
-                    }
-                }
-            }
-        }
-        
-        return (title, text)
-    }
-    
 }

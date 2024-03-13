@@ -10,6 +10,6 @@ import UIKit
 
 protocol ListOfNotesProtocol : UIViewController {
     var goToAddNote: (() -> Void)? { get set }
-    var goToNote: ((IndexPath) -> Void)? { get set }
+    var goToNote: ((UUID) -> Void)? { get set }
     func updateTableData(data: [NoteModel]?)
 }

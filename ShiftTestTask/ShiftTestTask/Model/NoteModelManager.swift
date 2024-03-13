@@ -38,6 +38,22 @@ extension NoteModelManager {
         }
     }
     
+    func getCurrentNote(id: UUID) -> NoteModel? {
+        let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+        let fetchRequest: NSFetchRequest<Notes> = Notes.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "id == %@", "\(id)")
+        
+        do {
+            let existingNote = try context.fetch(fetchRequest).first
+            guard let existingNote = existingNote,
+                  let title = existingNote.title else { return nil }
+            return NoteModel(id: existingNote.id, title: title, text: existingNote.text)
+        } catch {
+            //TODO: - Error Alert
+            return nil
+        }
+    }
+    
     func setNewDataToCoreData(title: String, text: String?) {
         guard title != "" else { return }
         let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
@@ -81,7 +97,7 @@ extension NoteModelManager {
         }
     }
     
-    func deleteDataFromCoreData(id: UUID) {
+    func deleteDataFromCoreData(id: UUID) -> Bool{
         let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
         let fetchRequest: NSFetchRequest<Notes> = Notes.fetchRequest()
         fetchRequest.predicate = NSPredicate(format: "id == %@", "\(id)")
@@ -94,12 +110,16 @@ extension NoteModelManager {
                 
                 do {
                     try context.save()
+                    return true
                 } catch {
                     //TODO: Error alert
+                    return false
                 }
             }
+            return false
         } catch {
             //TODO: Error alert
+            return false
         }
     }
 }

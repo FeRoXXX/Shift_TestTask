@@ -6,7 +6,10 @@
 //
 
 import Foundation
+import UIKit
 
 protocol CurrentNotePresenterProtocol {
-    
+    func viewLoaded(controller: CurrentNote, view: CurrentNoteProtocol, id: UUID)
+    func deleteNote(id: UUID)
+    func viewDisappear(id: UUID, title: String, text: String?)
 }

@@ -11,7 +11,7 @@ class ListOfNotes: UIViewController {
     @IBOutlet weak var tableOfNotes: UITableView!
     
     var goToAddNote: (() -> Void)?
-    var goToNote: ((_: IndexPath) -> Void)?
+    var goToNote: ((_: UUID) -> Void)?
     
     var presenter : ListOfNotesPresenterProtocol!
     var cellItem : [NoteModel]?
@@ -64,6 +64,8 @@ extension ListOfNotes : UITableViewDelegate, UITableViewDataSource, ListOfNotesP
               !cellItem.isEmpty else { return UITableViewCell() }
         let cell = UITableViewCell()
         var cellStyle = cell.defaultContentConfiguration()
+        cellStyle.textProperties.numberOfLines = 1
+        cellStyle.secondaryTextProperties.numberOfLines = 1
         cellStyle.text = cellItem[indexPath.row].title
         if let text = cellItem[indexPath.row].text {
             cellStyle.secondaryText = text
@@ -75,7 +77,9 @@ extension ListOfNotes : UITableViewDelegate, UITableViewDataSource, ListOfNotesP
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        self.goToNote?(indexPath)
+        guard let cellItem = cellItem,
+              let id = cellItem[indexPath.row].id else { return }
+        self.goToNote?(id)
     }
     
     func updateTableData(data: [NoteModel]?) {

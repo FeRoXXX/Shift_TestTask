@@ -34,6 +34,7 @@
 		2708D2472B9F3B8B000CC035 /* ListOfNotesAssembley.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2708D2462B9F3B8B000CC035 /* ListOfNotesAssembley.swift */; };
 		2708D2492B9F3EBF000CC035 /* AddNewNoteAssembley.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2708D2482B9F3EBF000CC035 /* AddNewNoteAssembley.swift */; };
 		2708D24B2B9F4140000CC035 /* CurrentNoteAssembley.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2708D24A2B9F4140000CC035 /* CurrentNoteAssembley.swift */; };
+		2708D24E2BA19D28000CC035 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2708D24D2BA19D28000CC035 /* Extensions.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -66,6 +67,7 @@
 		2708D2462B9F3B8B000CC035 /* ListOfNotesAssembley.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListOfNotesAssembley.swift; sourceTree = "<group>"; };
 		2708D2482B9F3EBF000CC035 /* AddNewNoteAssembley.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddNewNoteAssembley.swift; sourceTree = "<group>"; };
 		2708D24A2B9F4140000CC035 /* CurrentNoteAssembley.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentNoteAssembley.swift; sourceTree = "<group>"; };
+		2708D24D2BA19D28000CC035 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -98,6 +100,7 @@
 		2708D1F32B9ECDFD000CC035 /* ShiftTestTask */ = {
 			isa = PBXGroup;
 			children = (
+				2708D24C2BA19D16000CC035 /* Extensions */,
 				2708D2322B9EF343000CC035 /* CurrentNote */,
 				2708D2112B9EE7DC000CC035 /* AddNewNote */,
 				2708D2102B9EE7AF000CC035 /* ListOfNotes */,
@@ -250,6 +253,14 @@
 			path = Presenter;
 			sourceTree = "<group>";
 		};
+		2708D24C2BA19D16000CC035 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				2708D24D2BA19D28000CC035 /* Extensions.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -338,6 +349,7 @@
 				2708D2222B9EEA05000CC035 /* AddNewNote.swift in Sources */,
 				2708D2472B9F3B8B000CC035 /* ListOfNotesAssembley.swift in Sources */,
 				2708D2382B9EF382000CC035 /* CurrentNote.swift in Sources */,
+				2708D24E2BA19D28000CC035 /* Extensions.swift in Sources */,
 				2708D2252B9EEA1B000CC035 /* AddNewNotePresenterProtocol.swift in Sources */,
 				2708D1FF2B9ECDFD000CC035 /* ShiftTestTask.xcdatamodeld in Sources */,
 				2708D24B2B9F4140000CC035 /* CurrentNoteAssembley.swift in Sources */,

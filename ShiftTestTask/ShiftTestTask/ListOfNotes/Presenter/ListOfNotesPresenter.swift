@@ -25,13 +25,13 @@ private extension ListOfNotesPresenter {
         self.router.toAddNote()
     }
     
-    private func onClickedCurrentCell(_ indexPath: IndexPath) {
-        self.router.toCurrentCell(indexPath)
+    private func onClickedCurrentCell(_ id: UUID) {
+        self.router.toCurrentCell(id)
     }
     
     private func setHandlers() {
-        self.view?.goToNote = { [weak self] indexPath in
-            self?.onClickedCurrentCell(indexPath)
+        self.view?.goToNote = { [weak self] id in
+            self?.onClickedCurrentCell(id)
         }
         
         self.view?.goToAddNote = { [weak self] in

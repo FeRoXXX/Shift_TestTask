@@ -27,9 +27,9 @@ final class Router {
         self.controller?.navigationController?.pushViewController(targetController, animated: true)
     }
     
-    func toCurrentCell(_ indexPath: IndexPath) {
+    func toCurrentCell(_ id: UUID) {
         guard let targetControllerSecond = targetControllerSecond as? CurrentNote else { return }
-        targetControllerSecond.indexPath = indexPath
+        targetControllerSecond.id = id
         self.controller?.navigationController?.pushViewController(targetControllerSecond, animated: true)
     }
     
