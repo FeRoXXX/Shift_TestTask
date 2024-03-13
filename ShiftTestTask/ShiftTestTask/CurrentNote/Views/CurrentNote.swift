@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import PhotosUI
 
 class CurrentNote: UIViewController {
     @IBOutlet weak var textView: UITextView!
@@ -36,21 +37,6 @@ class CurrentNote: UIViewController {
     
 }
 
-extension CurrentNote: UITextViewDelegate {
-    
-    func setupTextView() {
-        textView.delegate = self
-    }
-    
-    func textViewDidChange(_ textView: UITextView) {
-        textView.highlightingTitle(textView: textView)
-    }
-    
-    func clearTextView() {
-        textView.text = ""
-    }
-}
-
 extension CurrentNote {
     
     func setupButtonToNavigationBar() {
@@ -62,7 +48,83 @@ extension CurrentNote {
     }
     
     @objc func deleteCurrentNote() {
+        textView.text = ""
         presenter.deleteNote(id: id)
+    }
+    
+}
+
+extension CurrentNote: UITextViewDelegate {
+    
+    func setupTextView() {
+        textView.delegate = self
+        let bar = UIToolbar()
+        let addPhoto = UIBarButtonItem(image: UIImage(systemName: "camera"), style: .done, target: self, action: #selector(addPhoto))
+        let correctTextStyle = UIBarButtonItem(image: UIImage(systemName: "square.and.pencil"), style: .done, target: self, action: #selector(correctTextStyle))
+        let fixedSpace = UIBarButtonItem(barButtonSystemItem: .fixedSpace, target: nil, action: nil)
+        fixedSpace.width = view.bounds.width - addPhoto.width - correctTextStyle.width
+        bar.items = [addPhoto, fixedSpace, correctTextStyle]
+        bar.sizeToFit()
+        textView.inputAccessoryView = bar
+    }
+    
+    func textViewDidChange(_ textView: UITextView) {
+        textView.highlightingTitle(textView: textView)
+    }
+    
+    func clearTextView() {
+        textView.text = ""
+    }
+    
+    @objc func addPhoto() {
+        configureImagePicker()
+    }
+    
+    @objc func correctTextStyle() {
+        
+    }
+}
+
+extension CurrentNote: PHPickerViewControllerDelegate {
+    
+    func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
+        picker.dismiss(animated: true)
+        
+        if let item = results.first?.itemProvider {
+            if item.canLoadObject(ofClass: UIImage.self){
+                item.loadObject(ofClass: UIImage.self) { image, error in
+                    if let error {
+                        print(error.localizedDescription)
+                    }
+                    if let image = image as? UIImage {
+                        DispatchQueue.main.async { [weak self] in
+                            guard let self = self else { return }
+                            let attachment = NSTextAttachment()
+                            attachment.image = image
+
+                            let imageSize = image.size
+                            let screenWidth = UIScreen.main.bounds.width
+                            let scale = screenWidth / imageSize.width
+                            let scaledSize = CGSize(width: imageSize.width * scale, height: imageSize.height * scale)
+                            attachment.bounds = CGRect(origin: .zero, size: scaledSize)
+
+                            let imageString = NSAttributedString(attachment: attachment)
+                            self.textView.textStorage.insert(imageString, at: self.textView.findIndex(in: self.textView))
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    func configureImagePicker() {
+        var configuration = PHPickerConfiguration()
+        configuration.selectionLimit = 1
+        configuration.filter = .images
+        
+        let pickerViewController = PHPickerViewController(configuration: configuration)
+        pickerViewController.delegate = self
+        present(pickerViewController, animated: true)
     }
     
 }

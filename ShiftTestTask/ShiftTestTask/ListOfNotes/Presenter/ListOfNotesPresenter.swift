@@ -49,7 +49,12 @@ extension ListOfNotesPresenter: ListOfNotesPresenterProtocol {
         self.view = view
         
         self.setHandlers()
-        updateTable()
+        if UserDefaults().bool(forKey: "NoFirstOpen") {
+            updateTable()
+        } else {
+            view.updateTableData(data: NoteModel.firstNote)
+            UserDefaults().setValue(true, forKey: "NoFirstOpen")
+        }
     }
     
     func viewOpen() {

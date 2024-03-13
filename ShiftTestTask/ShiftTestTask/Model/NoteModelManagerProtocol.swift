@@ -12,7 +12,7 @@ protocol NoteModelManagerProtocol {
     func setData(data: NoteModel)
     func getDataFromCoreData() -> [NoteModel]?
     func getCurrentNote(id: UUID) -> NoteModel?
-    func setNewDataToCoreData(title: String, text: String?)
+    func setNewDataToCoreData(id: UUID?, title: String, text: String?)
     func correctDataInCoreData(data: NoteModel)
     func deleteDataFromCoreData(id: UUID) -> Bool
 }

@@ -28,7 +28,7 @@ extension AddNewNotePresenter: AddNewNotePresenterProtocol {
     }
     
     func saveData(title: String, text: String?) {
-        model.setNewDataToCoreData(title: title, text: text)
+        model.setNewDataToCoreData(id: nil, title: title, text: text)
     }
     
 }

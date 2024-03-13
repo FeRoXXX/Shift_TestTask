@@ -54,11 +54,16 @@ extension NoteModelManager {
         }
     }
     
-    func setNewDataToCoreData(title: String, text: String?) {
+    func setNewDataToCoreData(id: UUID? = nil, title: String, text: String?) {
         guard title != "" else { return }
         let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
         let newData = Notes(context: context)
-        newData.id = UUID()
+        if id == nil {
+            newData.id = UUID()
+        } else {
+            newData.id = id
+        }
+        
         newData.title = title
         if let text = text {
             newData.text = text
@@ -91,6 +96,8 @@ extension NoteModelManager {
                 } catch {
                     //TODO: Error alert
                 }
+            } else {
+                setNewDataToCoreData(id: data.id, title: data.title, text: data.text)
             }
         } catch {
             //TODO: Error alert
@@ -101,7 +108,6 @@ extension NoteModelManager {
         let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
         let fetchRequest: NSFetchRequest<Notes> = Notes.fetchRequest()
         fetchRequest.predicate = NSPredicate(format: "id == %@", "\(id)")
-        
         do {
             let existingNote = try context.fetch(fetchRequest).first
             
@@ -116,7 +122,7 @@ extension NoteModelManager {
                     return false
                 }
             }
-            return false
+            return true
         } catch {
             //TODO: Error alert
             return false

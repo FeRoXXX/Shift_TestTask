@@ -34,7 +34,7 @@ extension UITextView {
         var title: String?
         var text: String?
         
-        for (index, line) in lines.enumerated() {
+        for (_, line) in lines.enumerated() {
             let trimmedLine = line.trimmingCharacters(in: .whitespacesAndNewlines)
             if !trimmedLine.isEmpty {
                 if title == nil {
@@ -50,5 +50,24 @@ extension UITextView {
         }
         
         return (title, text)
+    }
+    
+    func findIndex(in textView: UITextView) -> Int {
+        if textView.text == "" { return 0 }
+        if let selectedRange = textView.selectedTextRange {
+            let cursorPosition = textView.offset(from: textView.beginningOfDocument, to: selectedRange.start)
+            return cursorPosition
+        }
+        return 0
+    }
+    
+}
+
+extension UIImage {
+    func resized(size: CGSize) -> UIImage {
+        let renderer = UIGraphicsImageRenderer(size: size)
+        return renderer.image { _ in
+            self.draw(in: CGRect(origin: .zero, size: size))
+        }
     }
 }
