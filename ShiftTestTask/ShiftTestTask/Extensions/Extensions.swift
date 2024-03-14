@@ -9,28 +9,67 @@ import UIKit
 
 extension UITextView {
     
-    func highlightingTitle(textView: UITextView) {
-        guard let text = textView.text else {
+    func highlightingTitle() {
+        guard let text = self.text else {
             return
         }
 
-        let attributedString = NSMutableAttributedString(string: text)
+        let attributedString = NSMutableAttributedString(attributedString: self.attributedText)
 
-        let firstLineRange = (text as NSString).lineRange(for: NSRange(location: 0, length: 0))
-        attributedString.addAttribute(.font, value: UIFont.boldSystemFont(ofSize: 20), range: firstLineRange)
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.lineSpacing = 5
 
-        let otherLinesRange = NSRange(location: firstLineRange.upperBound, length: attributedString.length - firstLineRange.upperBound)
-        attributedString.addAttribute(.font, value: UIFont.systemFont(ofSize: 18), range: otherLinesRange)
+        let lines = text.components(separatedBy: "\n")
 
-        textView.attributedText = attributedString
+        var location = 0
+        for line in lines {
+            
+            let lineRange = NSRange(location: location, length: line.utf16.count)
+            location += line.utf16.count + 1
+            
+            var lineAttributes : [NSAttributedString.Key : Any] = [:]
+            if location != 0 && lineRange.length != 0 {
+                lineAttributes = attributedString.attributes(at: lineRange.location, effectiveRange: nil)
+            }
+
+            let hasAttachment = lineAttributes.keys.contains { key in
+                key == NSAttributedString.Key.attachment
+            }
+
+            if !hasAttachment {
+                if lineRange.location == 0 {
+                    attributedString.addAttribute(.font, value: UIFont.boldSystemFont(ofSize: 20), range: lineRange)
+                } else {
+                    attributedString.addAttribute(.font, value: UIFont.systemFont(ofSize: 18), range: lineRange)
+                }
+            }
+        }
+        self.attributedText = attributedString
     }
     
-    func findStrings(in textView: UITextView) -> (title: String?, text: String?) {
-        guard let textView = textView.text else {
-            return (nil, nil)
-        }
+    func moveCursor() {
+        self.selectedRange = NSRange(location: self.text.count, length: 0)
         
-        let lines = textView.components(separatedBy: CharacterSet.newlines)
+        self.replace(self.selectedTextRange!, withText: "\n")
+    }
+
+    
+    func findCursorIndex() -> Int {
+        if self.text == "" { return 0 }
+        if let selectedRange = self.selectedTextRange {
+            let cursorPosition = self.offset(from: self.beginningOfDocument, to: selectedRange.start)
+            return cursorPosition
+        }
+        return 0
+    }
+    
+}
+
+extension String {
+    
+    func findTitleAndText() -> (title: String?, text: String?) {
+        
+        let lines = self.components(separatedBy: CharacterSet.newlines)
         var title: String?
         var text: String?
         
@@ -50,15 +89,6 @@ extension UITextView {
         }
         
         return (title, text)
-    }
-    
-    func findIndex(in textView: UITextView) -> Int {
-        if textView.text == "" { return 0 }
-        if let selectedRange = textView.selectedTextRange {
-            let cursorPosition = textView.offset(from: textView.beginningOfDocument, to: selectedRange.start)
-            return cursorPosition
-        }
-        return 0
     }
     
 }

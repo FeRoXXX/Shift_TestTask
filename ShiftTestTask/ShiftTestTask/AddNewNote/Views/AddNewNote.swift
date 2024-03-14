@@ -19,9 +19,8 @@ class AddNewNote: UIViewController {
     }
     
     override func viewDidDisappear(_ animated: Bool) {
-        let strings = textView.findStrings(in: textView)
-        guard let title = strings.title else { return }
-        presenter.saveData(title: title, text: strings.text)
+        guard textView.text != "" else { return }
+        presenter.saveData(text: textView.attributedText)
         textView.text = ""
     }
 }
@@ -50,7 +49,9 @@ extension AddNewNote: PHPickerViewControllerDelegate {
                             attachment.bounds = CGRect(origin: .zero, size: scaledSize)
 
                             let imageString = NSAttributedString(attachment: attachment)
-                            self.textView.textStorage.insert(imageString, at: self.textView.findIndex(in: self.textView))
+                            self.textView.moveCursor()
+                            self.textView.textStorage.insert(imageString, at: self.textView.findCursorIndex())
+                            self.textView.moveCursor()
                         }
                     }
                 }
@@ -75,18 +76,17 @@ extension AddNewNote: UITextViewDelegate {
     func setupFirstValue() {
         textView.delegate = self
         textView.becomeFirstResponder()
-        let bar = UIToolbar()
+        let bar = UIToolbar(frame: CGRect(x: 0, y: 0, width: view.frame.width, height: 50))
         let addPhoto = UIBarButtonItem(image: UIImage(systemName: "camera"), style: .done, target: self, action: #selector(addPhoto))
         let correctTextStyle = UIBarButtonItem(image: UIImage(systemName: "square.and.pencil"), style: .done, target: self, action: #selector(correctTextStyle))
         let fixedSpace = UIBarButtonItem(barButtonSystemItem: .fixedSpace, target: nil, action: nil)
         fixedSpace.width = view.bounds.width - addPhoto.width - correctTextStyle.width
         bar.items = [addPhoto, fixedSpace, correctTextStyle]
-        bar.sizeToFit()
         textView.inputAccessoryView = bar
     }
     
     func textViewDidChange(_ textView: UITextView) {
-        textView.highlightingTitle(textView: textView)
+        textView.highlightingTitle()
     }
     
     @objc func addPhoto() {

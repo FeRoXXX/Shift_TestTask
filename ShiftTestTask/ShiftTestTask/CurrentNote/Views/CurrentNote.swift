@@ -25,10 +25,8 @@ class CurrentNote: UIViewController {
     }
     
     override func viewDidDisappear(_ animated: Bool) {
-        let strings = textView.findStrings(in: textView)
-        if let title = strings.title,
-           title != "" {
-            presenter.viewDisappear(id: id, title: title, text: strings.text)
+        if textView.text != "" {
+            presenter.viewDisappear(id: id, text: textView.attributedText)
         } else {
             presenter.deleteNote(id: id)
         }
@@ -58,18 +56,22 @@ extension CurrentNote: UITextViewDelegate {
     
     func setupTextView() {
         textView.delegate = self
-        let bar = UIToolbar()
+        let bar = UIToolbar(frame: CGRect(x: 0, y: 0, width: view.frame.width, height: 50))
         let addPhoto = UIBarButtonItem(image: UIImage(systemName: "camera"), style: .done, target: self, action: #selector(addPhoto))
         let correctTextStyle = UIBarButtonItem(image: UIImage(systemName: "square.and.pencil"), style: .done, target: self, action: #selector(correctTextStyle))
         let fixedSpace = UIBarButtonItem(barButtonSystemItem: .fixedSpace, target: nil, action: nil)
         fixedSpace.width = view.bounds.width - addPhoto.width - correctTextStyle.width
         bar.items = [addPhoto, fixedSpace, correctTextStyle]
-        bar.sizeToFit()
         textView.inputAccessoryView = bar
     }
     
     func textViewDidChange(_ textView: UITextView) {
-        textView.highlightingTitle(textView: textView)
+        //textView.highlightingTitle()
+    }
+    
+    func textViewShouldBeginEditing(_ textView: UITextView) -> Bool {
+        textView.highlightingTitle()
+        return true
     }
     
     func clearTextView() {
@@ -109,7 +111,9 @@ extension CurrentNote: PHPickerViewControllerDelegate {
                             attachment.bounds = CGRect(origin: .zero, size: scaledSize)
 
                             let imageString = NSAttributedString(attachment: attachment)
-                            self.textView.textStorage.insert(imageString, at: self.textView.findIndex(in: self.textView))
+                            
+                            self.textView.textStorage.insert(imageString, at: self.textView.findCursorIndex())
+                            self.textView.highlightingTitle()
                         }
                     }
                 }
@@ -132,25 +136,8 @@ extension CurrentNote: PHPickerViewControllerDelegate {
 extension CurrentNote: CurrentNoteProtocol {
     func putCurrentData(model: NoteModel? = nil) {
         guard let model = model else { return }
-        let attributedString = NSMutableAttributedString()
 
-        let titleAttributes: [NSAttributedString.Key: Any] = [
-            .font: UIFont.boldSystemFont(ofSize: 20),
-            .foregroundColor: UIColor.black
-        ]
-        let titleAttributedString = NSAttributedString(string: model.title + "\n", attributes: titleAttributes)
-        attributedString.append(titleAttributedString)
-
-        if let text = model.text {
-            let textAttributes: [NSAttributedString.Key: Any] = [
-                .font: UIFont.systemFont(ofSize: 18),
-                .foregroundColor: UIColor.darkGray
-            ]
-            let textAttributedString = NSAttributedString(string: text, attributes: textAttributes)
-            attributedString.append(textAttributedString)
-        }
-
-        textView.attributedText = attributedString
+        textView.attributedText = model.text
     }
     
 }

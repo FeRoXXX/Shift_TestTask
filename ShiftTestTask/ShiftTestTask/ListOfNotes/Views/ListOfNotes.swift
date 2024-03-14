@@ -66,8 +66,10 @@ extension ListOfNotes : UITableViewDelegate, UITableViewDataSource, ListOfNotesP
         var cellStyle = cell.defaultContentConfiguration()
         cellStyle.textProperties.numberOfLines = 1
         cellStyle.secondaryTextProperties.numberOfLines = 1
-        cellStyle.text = cellItem[indexPath.row].title
-        if let text = cellItem[indexPath.row].text {
+        let strings = cellItem[indexPath.row].text.string.findTitleAndText()
+        cellStyle.text = strings.title
+        
+        if let text = strings.text {
             cellStyle.secondaryText = text
         } else {
             cellStyle.secondaryText = "Нет дополнительного текста"

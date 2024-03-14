@@ -32,8 +32,8 @@ extension CurrentNotePresenter: CurrentNotePresenterProtocol {
         }
     }
     
-    func viewDisappear(id: UUID, title: String, text: String?) {
-        model.correctDataInCoreData(data: NoteModel(id: id, title: title, text: text))
+    func viewDisappear(id: UUID, text: NSAttributedString) {
+        model.correctDataInCoreData(data: NoteModel(id: id, text: text))
     }
     
 }

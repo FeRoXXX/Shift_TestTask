@@ -11,6 +11,6 @@ import UIKit
 protocol AddNewNotePresenterProtocol {
     
     func viewLoaded(controller: AddNewNote, view: AddNewNoteProtocol)
-    func saveData(title: String, text: String?)
+    func saveData(text: NSAttributedString)
     
 }

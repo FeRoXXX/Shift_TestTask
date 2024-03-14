@@ -27,8 +27,9 @@ extension NoteModelManager {
             let result = try context.fetch(fetchRequest)
             modelArray = []
             for i in result {
-                guard let title = i.title else { return nil}
-                let note = NoteModel(id: i.id, title: title, text: i.text)
+                guard let text = i.text,
+                      text.string != "" else { return nil}
+                let note = NoteModel(id: i.id, text: text)
                 modelArray?.append(note)
             }
             return modelArray
@@ -46,16 +47,16 @@ extension NoteModelManager {
         do {
             let existingNote = try context.fetch(fetchRequest).first
             guard let existingNote = existingNote,
-                  let title = existingNote.title else { return nil }
-            return NoteModel(id: existingNote.id, title: title, text: existingNote.text)
+                  let text = existingNote.text else { return nil }
+            return NoteModel(id: existingNote.id, text: text)
         } catch {
             //TODO: - Error Alert
             return nil
         }
     }
     
-    func setNewDataToCoreData(id: UUID? = nil, title: String, text: String?) {
-        guard title != "" else { return }
+    func setNewDataToCoreData(id: UUID? = nil, text: NSAttributedString) {
+        guard text.string != "" else { return }
         let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
         let newData = Notes(context: context)
         if id == nil {
@@ -64,10 +65,7 @@ extension NoteModelManager {
             newData.id = id
         }
         
-        newData.title = title
-        if let text = text {
-            newData.text = text
-        }
+        newData.text = text
         
         do {
             try context.save()
@@ -86,10 +84,7 @@ extension NoteModelManager {
             let existingNote = try context.fetch(fetchRequest).first
             
             if let existingNote = existingNote {
-                existingNote.title = data.title
-                if let text = data.text {
-                    existingNote.text = text
-                }
+                existingNote.text = data.text
                 
                 do {
                     try context.save()
@@ -97,7 +92,7 @@ extension NoteModelManager {
                     //TODO: Error alert
                 }
             } else {
-                setNewDataToCoreData(id: data.id, title: data.title, text: data.text)
+                setNewDataToCoreData(id: data.id, text: data.text)
             }
         } catch {
             //TODO: Error alert
