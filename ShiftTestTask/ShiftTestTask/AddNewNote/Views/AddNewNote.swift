@@ -36,23 +36,14 @@ extension AddNewNote: PHPickerViewControllerDelegate {
                     if let error {
                         print(error.localizedDescription)
                     }
-                    if let image = image as? UIImage {
-                        DispatchQueue.main.async { [weak self] in
-                            guard let self = self else { return }
-                            let attachment = NSTextAttachment()
-                            attachment.image = image
-
-                            let imageSize = image.size
-                            let screenWidth = UIScreen.main.bounds.width
-                            let scale = screenWidth / imageSize.width
-                            let scaledSize = CGSize(width: imageSize.width * scale, height: imageSize.height * scale)
-                            attachment.bounds = CGRect(origin: .zero, size: scaledSize)
-
-                            let imageString = NSAttributedString(attachment: attachment)
-                            self.textView.moveCursor()
-                            self.textView.textStorage.insert(imageString, at: self.textView.findCursorIndex())
-                            self.textView.moveCursor()
-                        }
+                    DispatchQueue.main.async {
+                        guard let image = image as? UIImage,
+                              let scaledImage = image.resized(toWidth: self.textView.frame.size.width),
+                              let encodedImageString = scaledImage.pngData()?.base64EncodedString(),
+                              let attributedString = NSAttributedString(base64EndodedImageString: encodedImageString) else { return }
+                        let attributedText = NSMutableAttributedString(attributedString: self.textView.attributedText)
+                        attributedText.append(attributedString)
+                        self.textView.attributedText = attributedText
                     }
                 }
             }

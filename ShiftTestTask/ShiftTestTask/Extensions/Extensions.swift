@@ -16,9 +16,6 @@ extension UITextView {
 
         let attributedString = NSMutableAttributedString(attributedString: self.attributedText)
 
-        let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.lineSpacing = 5
-
         let lines = text.components(separatedBy: "\n")
 
         var location = 0
@@ -35,8 +32,19 @@ extension UITextView {
             let hasAttachment = lineAttributes.keys.contains { key in
                 key == NSAttributedString.Key.attachment
             }
+            let hasAnyAttributed = lineAttributes.keys.contains { key in
+                let string = NSMutableAttributedString(AttributedString(stringLiteral: "a"))
+                let attribute = string.attributes(at: 0, effectiveRange: nil)
+                if attribute.keys.contains(where: { newKey in
+                    newKey == key
+                }) {
+                    return true
+                } else {
+                    return false
+                }
+            }
 
-            if !hasAttachment {
+            if !hasAttachment && !hasAnyAttributed {
                 if lineRange.location == 0 {
                     attributedString.addAttribute(.font, value: UIFont.boldSystemFont(ofSize: 20), range: lineRange)
                 } else {
@@ -94,10 +102,61 @@ extension String {
 }
 
 extension UIImage {
-    func resized(size: CGSize) -> UIImage {
-        let renderer = UIGraphicsImageRenderer(size: size)
-        return renderer.image { _ in
-            self.draw(in: CGRect(origin: .zero, size: size))
+    func resized(toWidth width: CGFloat) -> UIImage? {
+        let height = CGFloat(ceil(width / size.width * size.height))
+        let canvasSize = CGSize(width: width - 10, height: height - 10)
+        UIGraphicsBeginImageContextWithOptions(canvasSize, false, scale)
+        defer { UIGraphicsEndImageContext() }
+        draw(in: CGRect(origin: .zero, size: canvasSize))
+        return UIGraphicsGetImageFromCurrentImageContext()
+    }
+}
+
+extension NSAttributedString {
+    
+    convenience init?(base64EndodedImageString encodedImageString: String) {
+        var html = """
+        <!DOCTYPE html>
+        <html>
+          <body>
+            <img src="data:image/png;base64,\(encodedImageString)">
+          </body>
+        </html>
+        """
+        let data = Data(html.utf8)
+        let options: [NSAttributedString.DocumentReadingOptionKey : Any] = [
+            .documentType: NSAttributedString.DocumentType.html,
+            .characterEncoding: String.Encoding.utf8.rawValue
+        ]
+        try? self.init(data: data, options: options, documentAttributes: nil)
+    }
+
+    func toNSData() -> NSData? {
+        let options : [NSAttributedString.DocumentAttributeKey: Any] = [
+            .documentType: NSAttributedString.DocumentType.rtfd,
+            .characterEncoding: String.Encoding.utf8
+        ]
+
+        let range = NSRange(location: 0, length: length)
+        guard let data = try? data(from: range, documentAttributes: options) else {
+            return nil
         }
+
+        return NSData(data: data)
+    }
+    
+}
+
+extension NSData {
+    func toAttributedString() -> NSAttributedString? {
+        let data = Data(referencing: self)
+        let options : [NSAttributedString.DocumentReadingOptionKey: Any] = [
+            .documentType: NSAttributedString.DocumentType.rtfd,
+            .characterEncoding: String.Encoding.utf8
+        ]
+
+        return try? NSAttributedString(data: data,
+                                       options: options,
+                                       documentAttributes: nil)
     }
 }
