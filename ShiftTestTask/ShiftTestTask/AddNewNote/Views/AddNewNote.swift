@@ -21,6 +21,7 @@ class AddNewNote: UIViewController {
     override func viewDidDisappear(_ animated: Bool) {
         guard textView.text != "" else { return }
         presenter.saveData(text: textView.attributedText)
+        presenter.viewDisappear()
     }
 }
 

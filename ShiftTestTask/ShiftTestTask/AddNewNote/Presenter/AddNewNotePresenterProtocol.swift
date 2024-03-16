@@ -15,5 +15,6 @@ protocol AddNewNotePresenterProtocol {
     func saveData(text: NSAttributedString)
     func processingResultsFromPicker(results: [PHPickerResult], textView: UITextView)
     func makeBold(textView: UITextView)
+    func viewDisappear()
     
 }

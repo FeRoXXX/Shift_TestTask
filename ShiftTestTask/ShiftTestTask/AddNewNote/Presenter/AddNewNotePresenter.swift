@@ -58,4 +58,8 @@ extension AddNewNotePresenter: AddNewNotePresenterProtocol {
         textView.attributedText = attributedString
     }
     
+    func viewDisappear() {
+        view?.clearTextView()
+    }
+    
 }
