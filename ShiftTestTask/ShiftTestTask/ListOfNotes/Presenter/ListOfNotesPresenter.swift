@@ -47,7 +47,10 @@ extension ListOfNotesPresenter: ListOfNotesPresenterProtocol {
     func loadView(controller: ListOfNotes, view: ListOfNotesProtocol) {
         self.controller = controller
         self.view = view
-        
+        let firstNote = model.getFirstNote()
+        if let firstNote = firstNote {
+            UserDefaults().setValue(firstNote.id?.uuidString, forKey: "savedUUID")
+        }
         self.setHandlers()
         if UserDefaults().bool(forKey: "NoFirstOpen") {
             updateTable()

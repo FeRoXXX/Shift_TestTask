@@ -15,4 +15,5 @@ protocol NoteModelManagerProtocol {
     func setNewDataToCoreData(id: UUID?, text: NSAttributedString)
     func correctDataInCoreData(data: NoteModel)
     func deleteDataFromCoreData(id: UUID) -> Bool
+    func getFirstNote() -> NoteModel?
 }

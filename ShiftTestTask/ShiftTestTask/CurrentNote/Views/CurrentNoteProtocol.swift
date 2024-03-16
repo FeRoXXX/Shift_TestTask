@@ -11,4 +11,6 @@ import UIKit
 protocol CurrentNoteProtocol: UIViewController {
     func putCurrentData(model: NoteModel?)
     func popBack()
+    func updateTextView(attributedText: NSAttributedString)
+    func clearTextView()
 }

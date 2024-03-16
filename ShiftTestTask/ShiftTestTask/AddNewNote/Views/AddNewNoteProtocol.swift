@@ -9,5 +9,6 @@ import Foundation
 import UIKit
 
 protocol AddNewNoteProtocol: UIViewController {
-    
+    func clearTextView()
+    func updateTextView(attributedText: NSAttributedString)
 }

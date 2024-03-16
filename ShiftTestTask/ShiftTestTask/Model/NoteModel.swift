@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UIKit
 
 struct NoteModel {
     var id: UUID? = UUID()
@@ -13,5 +14,5 @@ struct NoteModel {
 }
 
 extension NoteModel {
-    static let firstNote = [NoteModel(id: UUID(), text: NSAttributedString(string: "Это первая заметка\n Вы можете удалить её сами или она удалится автоматически"))]
+    static let firstNote = [NoteModel(id: UUID(), text: NSAttributedString(string: "Это первая заметка\nВы можете удалить её сами или она удалится автоматически", attributes: [NSAttributedString.Key.font : UIFont.boldSystemFont(ofSize: 18)]))]
 }

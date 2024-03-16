@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import PhotosUI
 
 extension UITextView {
     
@@ -13,46 +14,54 @@ extension UITextView {
         guard let text = self.text else {
             return
         }
+        let cursorPosition = self.getCursorPosition()
+        let string = text.findTitleAndText()
 
         let attributedString = NSMutableAttributedString(attributedString: self.attributedText)
 
         let lines = text.components(separatedBy: "\n")
-
         var location = 0
         for line in lines {
-            
             let lineRange = NSRange(location: location, length: line.utf16.count)
             location += line.utf16.count + 1
             
-            var lineAttributes : [NSAttributedString.Key : Any] = [:]
+            var lineAttributes : NSAttributedString = NSAttributedString()
             if location != 0 && lineRange.length != 0 {
-                lineAttributes = attributedString.attributes(at: lineRange.location, effectiveRange: nil)
+                lineAttributes = attributedString.attributedSubstring(from: lineRange)
             }
-
-            let hasAttachment = lineAttributes.keys.contains { key in
+            let hasAttachment = lineAttributes.attributes(at: 0, effectiveRange: nil).keys.contains { key in
                 key == NSAttributedString.Key.attachment
             }
-            let hasAnyAttributed = lineAttributes.keys.contains { key in
-                let string = NSMutableAttributedString(AttributedString(stringLiteral: "a"))
-                let attribute = string.attributes(at: 0, effectiveRange: nil)
-                if attribute.keys.contains(where: { newKey in
-                    newKey == key
-                }) {
-                    return true
-                } else {
-                    return false
-                }
-            }
-
-            if !hasAttachment && !hasAnyAttributed {
-                if lineRange.location == 0 {
-                    attributedString.addAttribute(.font, value: UIFont.boldSystemFont(ofSize: 20), range: lineRange)
-                } else {
-                    attributedString.addAttribute(.font, value: UIFont.systemFont(ofSize: 18), range: lineRange)
+            if !hasAttachment {
+                if lineRange.location != 0 {
+                    if let fontBold = lineAttributes.attributes(at: 0, effectiveRange: nil)[.font] as? UIFont, fontBold.fontDescriptor.symbolicTraits.contains(.traitBold) && fontBold.pointSize == 18 {
+                        continue
+                    }
+                    attributedString.setAttributes([NSAttributedString.Key.font : UIFont.systemFont(ofSize: 18)], range: lineRange)
+                    continue
+                } else if lineRange.location == 0 && line == string.title{
+                    attributedString.setAttributes([NSAttributedString.Key.font : UIFont.boldSystemFont(ofSize: 20)], range: lineRange)
                 }
             }
         }
         self.attributedText = attributedString
+        if let cursorPosition = cursorPosition {
+            self.setCursorPosition(to: cursorPosition)
+        }
+    }
+    
+    func getCursorPosition() -> UITextPosition? {
+        return self.selectedTextRange?.start
+    }
+    
+    func isBold() -> Bool {
+        guard let stringRange = self.findCurrentStringRange() else { return true }
+        let attributedString = NSMutableAttributedString(attributedString: self.attributedText)
+        let lineAttributes = attributedString.attributedSubstring(from: stringRange)
+        if let fontBold = lineAttributes.attributes(at: 0, effectiveRange: nil)[.font] as? UIFont, fontBold.fontDescriptor.symbolicTraits.contains(.traitBold) {
+            return true
+        }
+        return false
     }
     
     func moveCursor() {
@@ -60,7 +69,28 @@ extension UITextView {
         
         self.replace(self.selectedTextRange!, withText: "\n")
     }
-
+    
+    func setCursorPosition(to position: UITextPosition) {
+        self.selectedTextRange = self.textRange(from: position, to: position)
+    }
+    
+    func findCurrentStringRange() -> NSRange? {
+        let cursorPosition = self.findCursorIndex()
+        
+        guard let text = self.text else { return nil}
+        
+        var lineStartIndex = cursorPosition
+        while lineStartIndex > 0 && text[text.index(text.startIndex, offsetBy: lineStartIndex - 1)] != "\n" {
+            lineStartIndex -= 1
+        }
+        
+        var lineEndIndex = cursorPosition
+        while lineEndIndex < text.count && text[text.index(text.startIndex, offsetBy: lineEndIndex)] != "\n" {
+            lineEndIndex += 1
+        }
+        
+        return NSRange(location: lineStartIndex, length: lineEndIndex - lineStartIndex)
+    }
     
     func findCursorIndex() -> Int {
         if self.text == "" { return 0 }
@@ -115,7 +145,7 @@ extension UIImage {
 extension NSAttributedString {
     
     convenience init?(base64EndodedImageString encodedImageString: String) {
-        var html = """
+        let html = """
         <!DOCTYPE html>
         <html>
           <body>
@@ -158,5 +188,22 @@ extension NSData {
         return try? NSAttributedString(data: data,
                                        options: options,
                                        documentAttributes: nil)
+    }
+}
+
+extension [PHPickerResult] {
+    func imageProcessing(completion: @escaping (UIImage?) -> Void){
+        if let item = self.first?.itemProvider {
+            if item.canLoadObject(ofClass: UIImage.self) {
+                item.loadObject(ofClass: UIImage.self) { image, error in
+                    if let error = error {
+                        print(error.localizedDescription)
+                        completion(nil)
+                    }
+                    guard let image = image as? UIImage else { return }
+                    completion(image)
+                }
+            }
+        }
     }
 }

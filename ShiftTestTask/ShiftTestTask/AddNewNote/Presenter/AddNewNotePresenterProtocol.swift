@@ -7,10 +7,13 @@
 
 import Foundation
 import UIKit
+import PhotosUI
 
 protocol AddNewNotePresenterProtocol {
     
     func viewLoaded(controller: AddNewNote, view: AddNewNoteProtocol)
     func saveData(text: NSAttributedString)
+    func processingResultsFromPicker(results: [PHPickerResult], textView: UITextView)
+    func makeBold(textView: UITextView)
     
 }

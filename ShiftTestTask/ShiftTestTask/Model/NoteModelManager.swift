@@ -123,6 +123,10 @@ extension NoteModelManager {
             return false
         }
     }
+    
+    func getFirstNote() -> NoteModel? {
+        return NoteModel.firstNote.first
+    }
 }
 
 extension NoteModelManager: NoteModelManagerProtocol {
